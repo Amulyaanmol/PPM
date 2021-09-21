@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using Domain;
+using System;
 using Output;
 namespace PPM
 {
-    public class Program
+    public static class Program
     {
         public static void Main()
         {
