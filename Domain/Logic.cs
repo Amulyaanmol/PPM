@@ -1,11 +1,11 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Model;
 using Model.Action;
 namespace Domain
 {
-    public class Logic
+    public static class Logic
     {
         static readonly List<Project> projectDetails = new ();
         static readonly List<Employee> employeeDetails = new ();
@@ -47,7 +47,7 @@ namespace Domain
         {
             DataResults<Project> displayProjectResults = new() { IsPositiveResult = true };
             if (projectDetails.Count > 0)
-                displayProjectResults.results = projectDetails;
+                displayProjectResults.Results = projectDetails;
             else
             {
                 displayProjectResults.Message = ".....Project List is Empty.....";
@@ -92,7 +92,7 @@ namespace Domain
         {
             DataResults<Employee> displayEmployeeResults = new() { IsPositiveResult = true };
             if (employeeDetails.Count > 0)
-                displayEmployeeResults.results = employeeDetails;
+                displayEmployeeResults.Results = employeeDetails;
             else
             {
                 displayEmployeeResults.IsPositiveResult = false;
@@ -137,7 +137,7 @@ namespace Domain
         {
             DataResults<Role> displayRoleResults = new (){ IsPositiveResult = true };
             if (roleDetails.Count > 0)
-                displayRoleResults.results = roleDetails;
+                displayRoleResults.Results = roleDetails;
             else
             {
                 displayRoleResults.IsPositiveResult = false;
@@ -214,13 +214,13 @@ namespace Domain
             ActionResult addEmployeeToProjectResult = new() { IsPositiveResult = true };
             try
             {  
-                if (projectDetails.Single(projectProperties => projectProperties.ProjectId == _projectId).listEmployee == null)
-                    projectDetails.Single(projectProperties => projectProperties.ProjectId == _projectId).listEmployee = new List<Employee>();
-                if (projectDetails.Single(projectProperties => projectProperties.ProjectId == _projectId).listEmployee.Exists(e => e.EmployeeId == employeeIdProperty.EmployeeId))
+                if (projectDetails.Single(projectProperties => projectProperties.ProjectId == _projectId).ListEmployee == null)
+                    projectDetails.Single(projectProperties => projectProperties.ProjectId == _projectId).ListEmployee = new List<Employee>();
+                if (projectDetails.Single(projectProperties => projectProperties.ProjectId == _projectId).ListEmployee.Exists(e => e.EmployeeId == employeeIdProperty.EmployeeId))
                     addEmployeeToProjectResult.Message = "\nAdding Employee details by Role into Project not Successful\nProject id " + _projectId + " Already contains this Employee id - " + employeeIdProperty.EmployeeId;
                 else
                 {
-                    projectDetails.Single(projectProperties => projectProperties.ProjectId == _projectId).listEmployee.Add(employeeIdProperty);
+                    projectDetails.Single(projectProperties => projectProperties.ProjectId == _projectId).ListEmployee.Add(employeeIdProperty);
                     addEmployeeToProjectResult.Message = "\nEmployee details by Role Successfully added to the project";
                 }     
             }
@@ -244,7 +244,7 @@ namespace Domain
         {
             Project project = new();
             if (projectDetails.Exists(projectProperties => projectProperties.ProjectId == _projectId))
-                    project.listEmployee = projectDetails.Single(projectProperties => projectProperties.ProjectId == _projectId).listEmployee;
+                project.ListEmployee = projectDetails.Single(projectProperties => projectProperties.ProjectId == _projectId).ListEmployee;
          return project;
         }
 
@@ -255,10 +255,10 @@ namespace Domain
             {
                 if (projectDetails.Exists(projectProperties => projectProperties.ProjectId == _projectId))
                 {
-                    if (projectDetails.Single(projectProperties => projectProperties.ProjectId == _projectId).listEmployee.Exists(employeeProperties => employeeProperties.EmployeeId == employeeIdProperty.EmployeeId))
+                    if (projectDetails.Single(projectProperties => projectProperties.ProjectId == _projectId).ListEmployee.Exists(employeeProperties => employeeProperties.EmployeeId == employeeIdProperty.EmployeeId))
                     {
-                        var removableItem = projectDetails.Single(projectProperties => projectProperties.ProjectId == _projectId).listEmployee.Single(employeeProperties => employeeProperties.EmployeeId == employeeIdProperty.EmployeeId);
-                        projectDetails.Single(projectProperties => projectProperties.ProjectId == _projectId).listEmployee.Remove(removableItem);
+                        var removableItem = projectDetails.Single(projectProperties => projectProperties.ProjectId == _projectId).ListEmployee.Single(employeeProperties => employeeProperties.EmployeeId == employeeIdProperty.EmployeeId);
+                        projectDetails.Single(projectProperties => projectProperties.ProjectId == _projectId).ListEmployee.Remove(removableItem);
                         deleteEmployeeFromProjectResult.Message = "\nSuccessfully deleted Employee id is - " + employeeIdProperty.EmployeeId;
                     }
                     else
