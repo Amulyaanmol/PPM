@@ -19,10 +19,7 @@ namespace Domain
                 if (projectDetails.Count > 0)
                 {
                     if (projectDetails.Exists(projectProperties => projectProperties.ProjectId == projectProperty.ProjectId))
-                    {
-                        addProjectresults.IsPositiveResult = false;
-                        addProjectresults.Message = "\nAdding Project Details is not Successful\nProject already exists with id - " + projectProperty.ProjectId;
-                    }
+                        addProjectresults.IsPositiveResult = false; 
                     else
                     {
                         projectDetails.Add(projectProperty);
@@ -64,10 +61,7 @@ namespace Domain
                 if (employeeDetails.Count > 0)
                 {
                     if (employeeDetails.Exists(employeeProperties => employeeProperties.EmployeeId == employeeProperty.EmployeeId))
-                    {
-                        addEmployeeResult.IsPositiveResult = false;
-                        addEmployeeResult.Message = "\nAdding Employee Details is not Successful\nEmployee already exists with id - " + employeeProperty.EmployeeId;
-                    }
+                        addEmployeeResult.IsPositiveResult = false;   
                     else
                     {
                         employeeDetails.Add(employeeProperty);
@@ -109,14 +103,11 @@ namespace Domain
                 if (roleDetails.Count > 0)
                 {
                     if (roleDetails.Exists(roleProperties => roleProperties.RoleId == roleProperty.RoleId))
-                    {
-                        addRoleResult.IsPositiveResult = false;
-                        addRoleResult.Message = "\nAdding Role Details is not Successful\nRole already exists with id - " + roleProperty.RoleId;
-                    }
+                         addRoleResult.IsPositiveResult = false;
                     else
                     {
                         roleDetails.Add(roleProperty);
-                        addRoleResult.Message = "\nRole Added Details to the Existing Role List";
+                        addRoleResult.Message = "\nRole Details Added to the Existing Role List";
                     }
                 }
                 else
@@ -154,10 +145,7 @@ namespace Domain
                 if (roleDetails.Exists(roleProperties => roleProperties.RoleId == employeeClassRoleIdProperty.EmployeeRoleId))
                     employeeClassRoleIdResult.IsPositiveResult = true;
                 else
-                {
-                    employeeClassRoleIdResult.IsPositiveResult = false;
-                    employeeClassRoleIdResult.Message = "\nThe given Role id Doesn't Exists - " + employeeClassRoleIdProperty.EmployeeRoleId;
-                }
+                    employeeClassRoleIdResult.IsPositiveResult = false;        
             }
             catch (Exception)
             {
@@ -175,10 +163,7 @@ namespace Domain
                 if (employeeDetails.Exists(employeeProperties => employeeProperties.EmployeeId == employeeIdProperty.EmployeeId))
                     EmployeeIdResult.IsPositiveResult = true;
                 else
-                {
-                    EmployeeIdResult.IsPositiveResult = false;
-                    EmployeeIdResult.Message = "\nThe given employee id Doesn't Exists - " + employeeIdProperty.EmployeeId;
-                }
+                    EmployeeIdResult.IsPositiveResult = false;       
             }
             catch (Exception)
             {
@@ -196,10 +181,7 @@ namespace Domain
                 if (projectDetails.Exists(projectProperties => projectProperties.ProjectId == _projectId))
                     projectIdResult.IsPositiveResult = true;
                 else
-                {
                     projectIdResult.IsPositiveResult = false;
-                    projectIdResult.Message = "\nThe given Project id Doesn't Exists - " + _projectId;
-                }
             }
             catch (Exception)
             {
@@ -217,11 +199,11 @@ namespace Domain
                 if (projectDetails.Single(projectProperties => projectProperties.ProjectId == _projectId).ListEmployee == null)
                     projectDetails.Single(projectProperties => projectProperties.ProjectId == _projectId).ListEmployee = new List<Employee>();
                 if (projectDetails.Single(projectProperties => projectProperties.ProjectId == _projectId).ListEmployee.Exists(e => e.EmployeeId == employeeIdProperty.EmployeeId))
-                    addEmployeeToProjectResult.Message = "\nAdding Employee details by Role into Project not Successful\nProject id " + _projectId + " Already contains this Employee id - " + employeeIdProperty.EmployeeId;
+                    addEmployeeToProjectResult.IsPositiveResult = false;
                 else
                 {
-                    projectDetails.Single(projectProperties => projectProperties.ProjectId == _projectId).ListEmployee.Add(employeeIdProperty);
-                    addEmployeeToProjectResult.Message = "\nEmployee details by Role Successfully added to the project";
+                    addEmployeeToProjectResult.IsPositiveResult = true;
+                    projectDetails.Single(projectProperties => projectProperties.ProjectId == _projectId).ListEmployee.Add(employeeIdProperty); 
                 }     
             }
             catch (Exception)
@@ -245,12 +227,12 @@ namespace Domain
             Project project = new();
             if (projectDetails.Exists(projectProperties => projectProperties.ProjectId == _projectId))
                 project.ListEmployee = projectDetails.Single(projectProperties => projectProperties.ProjectId == _projectId).ListEmployee;
-         return project;
+            return project;
         }
 
         public static ActionResult DeleteEmployeeFromProject(Employee employeeIdProperty, int _projectId)
         {
-            ActionResult deleteEmployeeFromProjectResult = new () { IsPositiveResult = true };
+            ActionResult deleteEmployeeFromProjectResult = new() { IsPositiveResult = true };
             try
             {
                 if (projectDetails.Exists(projectProperties => projectProperties.ProjectId == _projectId))
@@ -283,3 +265,6 @@ namespace Domain
 
     }
 }
+
+    
+
