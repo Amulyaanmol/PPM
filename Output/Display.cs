@@ -438,25 +438,29 @@ namespace Output
                 var getProjectIdResult = Logic.GetProjectId(projectId);
                 if (getProjectIdResult.ListEmployee != null)
                 {
+                    Console.Write("List of Available Employees in the given project id - " + projectId + "\nEmployee ID - Employee Name\n" +
+                            "-----------------------------------\n");
+                    foreach (Employee employeeProperties in getProjectIdResult.ListEmployee)
+                        Console.WriteLine(employeeProperties.EmployeeId + "\t" + employeeProperties.EmployeeName);
+                    Console.Write("\nInput the Employee Id (Only Numeric) to delete - ");
+                    employeeId.EmployeeId = Convert.ToInt32(Console.ReadLine());
                     var deleteEmployeeFromProjectResult = Logic.DeleteEmployeeFromProject(employeeId, projectId);
                     if (!deleteEmployeeFromProjectResult.IsPositiveResult)
-                        Console.WriteLine(deleteEmployeeFromProjectResult.Message);
-                    else
                     {
-                        Console.Write("List of Available Employees in the given project id - " + projectId + "\nEmployee ID - Employee Name\n" +
-                        "-----------------------------------\n");
-                        foreach (Employee employeeProperties in getProjectIdResult.ListEmployee)
-                            Console.WriteLine(employeeProperties.EmployeeId + "\t" + employeeProperties.EmployeeName);
                         Console.WriteLine(deleteEmployeeFromProjectResult.Message);
-                        Console.Write("\nInput the Employee Id (Only Numeric) to delete - ");
-                        employeeId.EmployeeId = Convert.ToInt32(Console.ReadLine());
                     }
+                    else
+                        Console.WriteLine(deleteEmployeeFromProjectResult.Message);    
                 }
                 else
-                    Console.WriteLine("\nThe given Project id Doesn't Contain Employee Details - " + projectId);
+                    Console.WriteLine("\nThe given Project id Doesn't Exists - " + projectId);    
             }
             else
-                Console.WriteLine(displayProjects.Message);
+            {
+                Console.WriteLine("Noting to Delete.....!!!!! "+displayProjects.Message);
+                int option1 = DisplayMainMenu();
+                MainCall(option1);
+            }
             Console.WriteLine(@"Do you want to Delete more Employees from Project? Y\N");
             char choice = Console.ReadKey().KeyChar;
             Console.WriteLine("\n");
@@ -501,7 +505,7 @@ namespace Output
                 }
             }
             else
-                Console.WriteLine(displayProjects.Message);   
+                Console.WriteLine("Noting to View Project Details.....!!!!! "+displayProjects.Message);   
         }
 
     }
