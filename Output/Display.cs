@@ -422,7 +422,14 @@ namespace Output
             }
             return displayEmployees.IsPositiveResult;
         }
-
+        //public static bool ListEmployee()
+        //{
+        //    Project project = new();
+        //    if (project.ListEmployee.Count > 0)
+        //        return true;
+        //    else
+        //        return false;
+        //}
         public static bool DeleteEmployeeFromProject()
         {
             Employee employeeId = new();
@@ -435,25 +442,41 @@ namespace Output
                     Console.WriteLine(projectProperties.ProjectId + "\t" + projectProperties.ProjectName);
                 Console.Write("Select Project Id (Only Numeric) from which you want to delete Employee details - ");
                 var projectId = Convert.ToInt32(Console.ReadLine());
-                var getProjectIdResult = Logic.GetProjectId(projectId);
-                if (getProjectIdResult.ListEmployee != null)
+                var projectIdResult = Logic.CheckProjectId(projectId);
+                if (projectIdResult.IsPositiveResult)
                 {
-                    Console.Write("List of Available Employees in the given project id - " + projectId + "\nEmployee ID - Employee Name\n" +
-                            "-----------------------------------\n");
-                    foreach (Employee employeeProperties in getProjectIdResult.ListEmployee)
-                        Console.WriteLine(employeeProperties.EmployeeId + "\t" + employeeProperties.EmployeeName);
-                    Console.Write("\nInput the Employee Id (Only Numeric) to delete - ");
-                    employeeId.EmployeeId = Convert.ToInt32(Console.ReadLine());
-                    var deleteEmployeeFromProjectResult = Logic.DeleteEmployeeFromProject(employeeId, projectId);
-                    if (!deleteEmployeeFromProjectResult.IsPositiveResult)
+                    var getProjectIdResult = Logic.GetProjectId(projectId);
+                    if (getProjectIdResult.ListEmployee!=null)
                     {
-                        Console.WriteLine(deleteEmployeeFromProjectResult.Message);
+                        Console.Write("List of Available Employees in the given project id - " + projectId + "\nEmployee ID - Employee Name\n" +
+                                "-----------------------------------\n");
+                        
+                            foreach (Employee employeeProperties in getProjectIdResult.ListEmployee)
+                                Console.WriteLine(employeeProperties.EmployeeId + "\t" + employeeProperties.EmployeeName);
+                            Console.Write("\nInput the Employee Id (Only Numeric) to delete - ");
+                            employeeId.EmployeeId = Convert.ToInt32(Console.ReadLine());
+                            var deleteEmployeeFromProjectResult = Logic.DeleteEmployeeFromProject(employeeId, projectId);
+                            if (!deleteEmployeeFromProjectResult.IsPositiveResult)
+                            {
+
+                                Console.WriteLine(deleteEmployeeFromProjectResult.Message);
+                            }
+                            else
+                                Console.WriteLine(deleteEmployeeFromProjectResult.Message);    
                     }
                     else
-                        Console.WriteLine(deleteEmployeeFromProjectResult.Message);    
+                    {
+                        Console.WriteLine("\nThe given Project id Doesn't Contain Employee Details to Delete - " + employeeId.EmployeeId);
+                        int option1 = DisplayMainMenu();
+                        MainCall(option1);
+                    }
                 }
                 else
-                    Console.WriteLine("\nThe given Project id Doesn't Exists - " + projectId);    
+                {
+                    Console.WriteLine("\nThe given Project id Doesn't Exists - " + projectId);
+                    int option1 = DisplayMainMenu();
+                    MainCall(option1);
+                }
             }
             else
             {
@@ -507,6 +530,6 @@ namespace Output
             else
                 Console.WriteLine("Noting to View Project Details.....!!!!! "+displayProjects.Message);   
         }
-
+        
     }
 }
