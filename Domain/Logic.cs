@@ -7,6 +7,7 @@ namespace Domain
 {
     public static class Logic
     {
+        
         static readonly List<Project> projectDetails = new ();
         static readonly List<Employee> employeeDetails = new ();
         static readonly List<Role> roleDetails = new ();
@@ -229,7 +230,6 @@ namespace Domain
                 project.ListEmployee = projectDetails.Single(projectProperties => projectProperties.ProjectId == _projectId).ListEmployee;
             return project;
         }
-
         public static ActionResult DeleteEmployeeFromProject(Employee employeeIdProperty, int _projectId)
         {
             ActionResult deleteEmployeeFromProjectResult = new() { IsPositiveResult = true };
@@ -250,10 +250,7 @@ namespace Domain
                     }
                 }
                 else
-                {
-                    deleteEmployeeFromProjectResult.IsPositiveResult = false;
-                    deleteEmployeeFromProjectResult.Message = "\nThe given Project id Doesn't Exists - " + _projectId;
-                }
+                  deleteEmployeeFromProjectResult.IsPositiveResult = false;    
             }
             catch (Exception)
             {
@@ -262,6 +259,7 @@ namespace Domain
             }
             return deleteEmployeeFromProjectResult;
         }
+        
 
     }
 }
