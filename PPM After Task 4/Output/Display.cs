@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Model;
 using Domain;
 using System.Text.RegularExpressions;
@@ -223,17 +223,12 @@ namespace Output
             var displayProjects = Logic.DisplayProjects();
             if (displayProjects.IsPositiveResult)
             {
-                if (displayProjects.Results != null)
-                {
                     Console.WriteLine("--Projects Details are--\n");
                     Console.WriteLine("Project ID - Project Name -  Project Start Date - Project End Date - Project Budget\n" +
                                   "--------------------------------------------------------------------------------------");
                     foreach (Project projectProperties in displayProjects.Results)
                         Console.WriteLine(projectProperties.ProjectId + "\t\t" + projectProperties.ProjectName + "\t\t" + projectProperties.OpenDate.ToShortDateString() + "\t" +
                             projectProperties.CloseDate.ToShortDateString() + "\t" + projectProperties.Budget);
-                }
-                else
-                    Console.WriteLine("Noting to Display.....!!!!! " + displayProjects.Message);
             }
             else
                 Console.WriteLine("\n.....Project List is Empty.....");
@@ -246,8 +241,6 @@ namespace Output
                 var displayProjects = Logic.DisplayProjects();
                 if (displayProjects.IsPositiveResult)
                 {
-                    if (displayProjects.Results != null)
-                    {
                         Console.WriteLine("Project ID - Project Name\n--------------------------------------");
                         foreach (Project projectProperties in displayProjects.Results)
                             Console.WriteLine(projectProperties.ProjectId + "\t\t" + projectProperties.ProjectName);
@@ -264,9 +257,6 @@ namespace Output
                         }
                         else
                             Console.WriteLine("Project Id Doesn't Exists....");
-                    }
-                    else
-                        Console.WriteLine("Noting to Display.....!!!!! " + displayProjects.Message);
                 }
                 else
                     Console.WriteLine("\n.....Project List is Empty.....");
@@ -284,30 +274,25 @@ namespace Output
             var displayProjects = Logic.DisplayProjects();
             if (displayProjects.IsPositiveResult)
             {
-                if (displayProjects.Results != null)
+                Console.WriteLine("List of Available Project details are...\nProject ID - Project Name\n" +
+                "-----------------------------------");
+                foreach (Project projectProperties in displayProjects.Results)
+                    Console.WriteLine(projectProperties.ProjectId + "\t" + projectProperties.ProjectName);
+                Console.Write("Input the Project Id (Only Numeric) to Delete - ");
+                project.ProjectId = Convert.ToInt32(Console.ReadLine());
+                var projectIdResult = Logic.CheckProjectId(project.ProjectId);
+                if (projectIdResult.IsPositiveResult)
                 {
-                    Console.WriteLine("List of Available Project details are...\nProject ID - Project Name\n" +
-                    "-----------------------------------");
-                    foreach (Project projectProperties in displayProjects.Results)
-                        Console.WriteLine(projectProperties.ProjectId + "\t" + projectProperties.ProjectName);
-                    Console.Write("Input the Project Id (Only Numeric) to Delete - ");
-                    project.ProjectId = Convert.ToInt32(Console.ReadLine());
-                    var projectIdResult = Logic.CheckProjectId(project.ProjectId);
-                    if (projectIdResult.IsPositiveResult)
+                    var deleteProjectResult = Logic.DeleteProject(project);
+                    if (!deleteProjectResult.IsPositiveResult)
                     {
-                        var deleteProjectResult = Logic.DeleteProject(project);
-                        if (!deleteProjectResult.IsPositiveResult)
-                        {
-                            Console.WriteLine(deleteProjectResult.Message);  
-                        }
-                        else
-                            Console.WriteLine(deleteProjectResult.Message);
+                        Console.WriteLine(deleteProjectResult.Message);  
                     }
                     else
-                        Console.WriteLine("Project Id Doesn't Exists....");
+                        Console.WriteLine(deleteProjectResult.Message);
                 }
                 else
-                    Console.WriteLine("Noting to Delete.....!!!!! " + displayProjects.Message);
+                    Console.WriteLine("Project Id Doesn't Exists....");
             }
             else
                 Console.WriteLine("\n.....Project List is Empty.....\n");
@@ -339,17 +324,9 @@ namespace Output
                 var displayRoles = Logic.DisplayRoles();
                 if (displayRoles.IsPositiveResult)
                 {
-                    if (displayRoles.Results != null)
-                    {
-                        Console.WriteLine("Available Roles in the List are --- \nID - Name:\n------------");
-                        foreach (Role roleProperties in displayRoles.Results)
-                            Console.WriteLine(roleProperties.RoleId + " - " + roleProperties.RoleName);
-                    }
-                    else
-                    {
-                        Console.Write("\nNoting to Display.....!!!!!" + displayRoles.Message+"\nRedirecting you to Add Role Option\n");
-                        AddRole();
-                    }
+                    Console.WriteLine("Available Roles in the List are --- \nID - Name:\n------------");
+                    foreach (Role roleProperties in displayRoles.Results)
+                        Console.WriteLine(roleProperties.RoleId + " - " + roleProperties.RoleName);
                 }
                 else
                 {
@@ -435,16 +412,11 @@ namespace Output
             var displayEmployees = Logic.DisplayEmployees();
             if (displayEmployees.IsPositiveResult)
             {
-                if (displayEmployees.Results != null)
-                {
-                    Console.WriteLine("--Employees Details are--\n");
-                    Console.WriteLine("Employee ID - Employee Name - Employee Contact\n" +
+                Console.WriteLine("--Employees Details are--\n");
+                Console.WriteLine("Employee ID - Employee Name - Employee Contact\n" +
                         "--------------------------------------------------");
-                    foreach (Employee employeeProperties in displayEmployees.Results)
-                        Console.WriteLine(employeeProperties.EmployeeId + "\t\t" + employeeProperties.EmployeeName + "\t\t" + employeeProperties.Contact);
-                }
-                else
-                    Console.WriteLine("Noting to Display.....!!!!! " + displayEmployees.Message);
+                foreach (Employee employeeProperties in displayEmployees.Results)
+                    Console.WriteLine(employeeProperties.EmployeeId + "\t\t" + employeeProperties.EmployeeName + "\t\t" + employeeProperties.Contact);
             }
             else
                 Console.WriteLine("\n.....Employee List is Empty.....");
@@ -458,26 +430,21 @@ namespace Output
                 var displayEmployees = Logic.DisplayEmployees();
                 if (displayEmployees.IsPositiveResult)
                 {
-                    if (displayEmployees.Results != null)
+                    Console.WriteLine("Employee ID - Employee Name\n--------------------------------------");
+                    foreach (Employee employeeProperties in displayEmployees.Results)
+                        Console.WriteLine(employeeProperties.EmployeeId + "\t\t" + employeeProperties.EmployeeName);
+                    Console.Write("\nSelect Employee Id to Display Full details of Respective Id from the List - ");
+                    employee.EmployeeId = Convert.ToInt32(Console.ReadLine());
+                    var employeeIdResult = Logic.CheckEmployeeId(employee);
+                    if (employeeIdResult.IsPositiveResult)
                     {
-                        Console.WriteLine("Employee ID - Employee Name\n--------------------------------------");
-                        foreach (Employee employeeProperties in displayEmployees.Results)
-                            Console.WriteLine(employeeProperties.EmployeeId + "\t\t" + employeeProperties.EmployeeName);
-                        Console.Write("\nSelect Employee Id to Display Full details of Respective Id from the List - ");
-                        employee.EmployeeId = Convert.ToInt32(Console.ReadLine());
-                        var employeeIdResult = Logic.CheckEmployeeId(employee);
-                        if (employeeIdResult.IsPositiveResult)
-                        {
-                            var employeesByIdResult = Logic.DisplayEmployeesById(employee);
-                            Console.WriteLine("Employee ID - Employee Name - Employee Contact\n" +
-                            "--------------------------------------------------");
-                            Console.WriteLine(employeesByIdResult.EmployeeId + "\t\t" + employeesByIdResult.EmployeeName + "\t\t" + employeesByIdResult.Contact);
-                        }
-                        else
-                            Console.WriteLine("Employee Id Doesn't Exists....");
+                        var employeesByIdResult = Logic.DisplayEmployeesById(employee);
+                        Console.WriteLine("Employee ID - Employee Name - Employee Contact\n" +
+                          "--------------------------------------------------");
+                        Console.WriteLine(employeesByIdResult.EmployeeId + "\t\t" + employeesByIdResult.EmployeeName + "\t\t" + employeesByIdResult.Contact);
                     }
                     else
-                        Console.WriteLine("Noting to Display.....!!!!! " + displayEmployees.Message);
+                        Console.WriteLine("Employee Id Doesn't Exists....");
                 }
                 else
                     Console.WriteLine("\n.....Employee List is Empty.....");
@@ -495,31 +462,26 @@ namespace Output
             var displayEmployees = Logic.DisplayEmployees();
             if (displayEmployees.IsPositiveResult)
             {
-                if (displayEmployees.Results != null)
+                Console.WriteLine("List of Available Employee details are...\nEmployee ID - Employee Name\n" +
+                "-----------------------------------");
+                foreach (Employee employeeProperties in displayEmployees.Results)
+                    Console.WriteLine(employeeProperties.EmployeeId + "\t" + employeeProperties.EmployeeName);
+                Console.Write("Input the Employee Id (Only Numeric) to Delete - ");
+                employee.EmployeeId = Convert.ToInt32(Console.ReadLine());
+                var employeeIdResult = Logic.CheckEmployeeId(employee);
+                if (employeeIdResult.IsPositiveResult)
                 {
-                    Console.WriteLine("List of Available Employee details are...\nEmployee ID - Employee Name\n" +
-                    "-----------------------------------");
-                    foreach (Employee employeeProperties in displayEmployees.Results)
-                        Console.WriteLine(employeeProperties.EmployeeId + "\t" + employeeProperties.EmployeeName);
-                    Console.Write("Input the Employee Id (Only Numeric) to Delete - ");
-                    employee.EmployeeId = Convert.ToInt32(Console.ReadLine());
-                    var employeeIdResult = Logic.CheckEmployeeId(employee);
-                    if (employeeIdResult.IsPositiveResult)
+                    var deleteemployeeResult = Logic.DeleteEmployee(employee);
+                    if (!deleteemployeeResult.IsPositiveResult)
                     {
-                        var deleteemployeeResult = Logic.DeleteEmployee(employee);
-                        if (!deleteemployeeResult.IsPositiveResult)
-                        {
 
-                            Console.WriteLine(deleteemployeeResult.Message);
-                        }
-                        else
-                            Console.WriteLine(deleteemployeeResult.Message);
+                        Console.WriteLine(deleteemployeeResult.Message);
                     }
                     else
-                        Console.WriteLine("Employee Id Doesn't Exists....");
+                        Console.WriteLine(deleteemployeeResult.Message);
                 }
                 else
-                    Console.WriteLine("Noting to Delete.....!!!!! " + displayEmployees.Message);
+                    Console.WriteLine("Employee Id Doesn't Exists....");
             }
             else
                 Console.WriteLine("\n.....Employee List is Empty.....\n");
@@ -602,15 +564,10 @@ namespace Output
             var displayRoles = Logic.DisplayRoles();
             if (displayRoles.IsPositiveResult)
             {
-                if (displayRoles.Results != null)
-                {
-                    Console.WriteLine("--Roles Details are--\n");
-                    Console.WriteLine("Role ID - Role Name \n----------------------");
-                    foreach (Role roleProperties in displayRoles.Results)
-                        Console.WriteLine(roleProperties.RoleId + "\t\t" + roleProperties.RoleName);
-                }
-                else
-                    Console.WriteLine("Noting to Display.....!!!!! " + displayRoles.Message);
+                Console.WriteLine("--Roles Details are--\n");
+                Console.WriteLine("Role ID - Role Name \n----------------------");
+                foreach (Role roleProperties in displayRoles.Results)
+                    Console.WriteLine(roleProperties.RoleId + "\t\t" + roleProperties.RoleName);
             }
             else
                 Console.WriteLine("\n.....Role List is Empty.....");
@@ -623,25 +580,20 @@ namespace Output
                 var displayRoles = Logic.DisplayRoles();
                 if (displayRoles.IsPositiveResult)
                 {
-                    if (displayRoles.Results != null)
+                    Console.WriteLine("Role ID\n----------------");
+                    foreach (Role roleProperties in displayRoles.Results)
+                        Console.WriteLine(roleProperties.RoleId);
+                    Console.Write("\nSelect Role Id to Display Full details of Respective Id from the List - ");
+                    var roleId = Convert.ToInt32(Console.ReadLine());
+                    var roleIdResult = Logic.CheckRoleId(roleId);
+                    if (roleIdResult.IsPositiveResult)
                     {
-                        Console.WriteLine("Role ID\n----------------");
-                        foreach (Role roleProperties in displayRoles.Results)
-                            Console.WriteLine(roleProperties.RoleId);
-                        Console.Write("\nSelect Role Id to Display Full details of Respective Id from the List - ");
-                        var roleId = Convert.ToInt32(Console.ReadLine());
-                        var roleIdResult = Logic.CheckRoleId(roleId);
-                        if (roleIdResult.IsPositiveResult)
-                        {
-                            var rolesByIdResult = Logic.DisplayRolesById(roleId);
-                            Console.WriteLine("Role ID - Role Name \n----------------------");
-                            Console.WriteLine(rolesByIdResult.RoleId + "\t\t" + rolesByIdResult.RoleName);
-                        }
-                        else
-                            Console.WriteLine("Role Id Doesn't Exists....");
+                        var rolesByIdResult = Logic.DisplayRolesById(roleId);
+                        Console.WriteLine("Role ID - Role Name \n----------------------");
+                        Console.WriteLine(rolesByIdResult.RoleId + "\t\t" + rolesByIdResult.RoleName);
                     }
                     else
-                        Console.WriteLine("Noting to Display.....!!!!! " + displayRoles.Message);
+                        Console.WriteLine("Role Id Doesn't Exists....");
                 }
                 else
                     Console.WriteLine("\n.....Role List is Empty.....");
@@ -659,31 +611,25 @@ namespace Output
             var displayRoles = Logic.DisplayRoles();
             if (displayRoles.IsPositiveResult)
             {
-                if (displayRoles.Results != null)
+                Console.WriteLine("List of Available Role details are...\nRole ID - Role Name\n" +
+                "-----------------------------------");
+                foreach (Role roleProperties in displayRoles.Results)
+                    Console.WriteLine(roleProperties.RoleId + "\t" + roleProperties.RoleName);
+                Console.Write("Input the Role Id (Only Numeric) to Delete - ");
+                role.RoleId = Convert.ToInt32(Console.ReadLine());
+                var roleIdResult = Logic.CheckRoleId(role.RoleId);
+                if (roleIdResult.IsPositiveResult)
                 {
-                    Console.WriteLine("List of Available Role details are...\nRole ID - Role Name\n" +
-                    "-----------------------------------");
-                    foreach (Role roleProperties in displayRoles.Results)
-                        Console.WriteLine(roleProperties.RoleId + "\t" + roleProperties.RoleName);
-                    Console.Write("Input the Role Id (Only Numeric) to Delete - ");
-                    role.RoleId = Convert.ToInt32(Console.ReadLine());
-                    var roleIdResult = Logic.CheckRoleId(role.RoleId);
-                    if (roleIdResult.IsPositiveResult)
+                    var deleteRoleResult = Logic.DeleteRole(role);
+                    if (!deleteRoleResult.IsPositiveResult)
                     {
-                        var deleteRoleResult = Logic.DeleteRole(role);
-                        if (!deleteRoleResult.IsPositiveResult)
-                        {
-
-                            Console.WriteLine(deleteRoleResult.Message);
-                        }
-                        else
-                            Console.WriteLine(deleteRoleResult.Message);
+                        Console.WriteLine(deleteRoleResult.Message);
                     }
                     else
-                        Console.WriteLine("Role Id Doesn't Exists....");
+                        Console.WriteLine(deleteRoleResult.Message);
                 }
                 else
-                    Console.WriteLine("Noting to Delete.....!!!!! " + displayRoles.Message);
+                    Console.WriteLine("Role Id Doesn't Exists....");
             }
             else
                 Console.WriteLine("\n.....Role List is Empty.....\n");
