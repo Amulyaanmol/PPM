@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Model;
 using Domain;
 using System.Text.RegularExpressions;
@@ -143,6 +143,13 @@ namespace Output
                     Console.WriteLine("Byeeeeeeeeee!!!!!!!!!");
                     Environment.Exit(0);
                     break;
+                //case 5
+                //    Console.WriteLine("Enter EmployeeId which you want to delete:")
+                //    empId1 = Convert.ToInt32(Console.ReadLine())
+                //    DeleteEmployeeFromProject(empId1)
+                //    option1 = DisplayMainMenu()
+                //    MainCall(option1)
+                //    break
                 default:
                     Console.WriteLine("Invalid Input!!!!!!Re-Enter");
                     option1 = DisplayMainMenu();
@@ -229,26 +236,26 @@ namespace Output
                     switch (char.ToUpper(choice))
                     {
                         case 'Y':
-                                Console.WriteLine("Available Employees in the List are --- \nID - Name\n------------");
-                                foreach (Employee employeeProperties in displayEmployees.Results)
-                                    Console.WriteLine(employeeProperties.EmployeeId + " - " + employeeProperties.EmployeeName);
-                                Console.Write("How Many Employees you want add to this Project - ");
-                                int count = Convert.ToInt32(Console.ReadLine());
-                                var countResult = Logic.CheckCount(count);
-                                if (countResult.IsPositiveResult)
+                            Console.WriteLine("Available Employees in the List are --- \nID - Name\n------------");
+                            foreach (Employee employeeProperties in displayEmployees.Results)
+                                Console.WriteLine(employeeProperties.EmployeeId + " - " + employeeProperties.EmployeeName);
+                            Console.Write("How Many Employees you want add to this Project - ");
+                            int count = Convert.ToInt32(Console.ReadLine());
+                            var countResult = Logic.CheckCount(count);
+                            if (countResult.IsPositiveResult)
+                            {
+                                var addProjectResult = Logic.AddProject(project);
+                                if (addProjectResult.IsPositiveResult)
                                 {
-                                    var addProjectResult = Logic.AddProject(project);
-                                    if (addProjectResult.IsPositiveResult)
-                                    {
-                                        for (int i = 1; i <= count; i++)
-                                            AddEmployeeToProject(project.ProjectId);
-                                        Console.WriteLine(addProjectResult.Message + " With Employee details by Role\n");
-                                    }
-                                    else
-                                        Console.WriteLine("\nAdding Project Details is not Successful\nProject already exists with id - " + project.ProjectId);
+                                    for (int i = 1; i <= count; i++)
+                                        AddEmployeeToProject(project.ProjectId);
+                                    Console.WriteLine(addProjectResult.Message + " With Employee details by Role\n");
                                 }
                                 else
-                                    Console.WriteLine("\nAdding Project Details is not Successful\nEnter the Correct Count to add Employee...!!!!!");
+                                    Console.WriteLine("\nAdding Project Details is not Successful\nProject already exists with id - " + project.ProjectId);
+                            }
+                            else
+                                Console.WriteLine("\nAdding Project Details is not Successful\nEnter the Correct Count to add Employee...!!!!!");
                             break;
                         case 'N':
                             var addProjectResults = Logic.AddProject(project);
@@ -286,7 +293,7 @@ namespace Output
                     MainCall(1);
                     break;
             }
-            return true;
+            return displayEmployees.IsPositiveResult;
         }
 
         public static void DisplayProjectList()
@@ -294,17 +301,15 @@ namespace Output
             var displayProjects = Logic.DisplayProjects();
             if (displayProjects.IsPositiveResult)
             {
-                    Console.WriteLine("--Projects Details with Employee Assigned by Role are--\n");
+                Console.WriteLine("--Projects Details with Employee Assigned by Role are--");
                 foreach (Project projectProperties in displayProjects.Results)
                 {
-                    Console.WriteLine("Project ID - Project Name -  Project Start Date - Project End Date - Project Budget\n" +
-                                  "--------------------------------------------------------------------------------------");
+                    Console.WriteLine("\nProject ID - Project Name -  Project Start Date - Project End Date - Project Budget\n--------------------------------------------------------------------------------------");
                     Console.WriteLine(projectProperties.ProjectId + "\t\t" + projectProperties.ProjectName + "\t\t" + projectProperties.OpenDate.ToShortDateString() + "\t" +
                                         projectProperties.CloseDate.ToShortDateString() + "\t" + projectProperties.Budget);
                     if (projectProperties.ListEmployee != null)
                     {
-                        Console.WriteLine("Assigned Employee details are.....\nEmployee Name - Employee Id - Role Id\n" +
-                            "------------------------------------------");
+                        Console.WriteLine("\n\nEmployee Name - Employee Id - Role Id\n------------------------------------------");
                         foreach (Employee employeeProperties in projectProperties.ListEmployee)
                             Console.WriteLine(employeeProperties.EmployeeName + "\t\t" + employeeProperties.EmployeeId + "\t\t" + employeeProperties.EmployeeRoleId);
                     }
@@ -332,15 +337,14 @@ namespace Output
                     if (projectIdResult.IsPositiveResult)
                     {
                         var projectsByIdResult = Logic.DisplayProjectsById(projectId);
-                        Console.WriteLine("\nProject ID - Project Name -  Project Start Date - Project End Date - Project Budget\n" +
+                        Console.WriteLine("\nProject ID - Project Name -  Project Start Date - Project End Date - Project Budget\n" + 
                                               "--------------------------------------------------------------------------------------");
-                        Console.WriteLine(projectsByIdResult.ProjectId + "\t\t" + projectsByIdResult.ProjectName + "\t\t" + projectsByIdResult.OpenDate.ToShortDateString() + "\t" +
-                                            projectsByIdResult.CloseDate.ToShortDateString() + "\t" + projectsByIdResult.Budget);
+                        Console.WriteLine(projectsByIdResult.ProjectId + "\t\t" + projectsByIdResult.ProjectName + "\t\t" + projectsByIdResult.OpenDate.ToShortDateString() +
+                         "\t" + projectsByIdResult.CloseDate.ToShortDateString() + "\t" + projectsByIdResult.Budget);
                         var getProjectIdResult = Logic.GetProjectId(projectId);
                         if (getProjectIdResult.ListEmployee != null)
                         {
-                            Console.WriteLine("\n\nEmployee ID - Employee Name - Role Id\n" +
-                                    "-----------------------------------");
+                            Console.WriteLine("\n\nEmployee ID - Employee Name - Role Id\n-----------------------------------");
                             foreach (Employee employeeProperties in getProjectIdResult.ListEmployee)
                                 Console.WriteLine(employeeProperties.EmployeeId + "\t\t" +  employeeProperties.EmployeeName + "\t\t" + employeeProperties.EmployeeRoleId);
                         }
@@ -376,12 +380,7 @@ namespace Output
                 if (projectIdResult.IsPositiveResult)
                 {
                     var deleteProjectResult = Logic.DeleteProject(project);
-                    if (!deleteProjectResult.IsPositiveResult)
-                    {
-                        Console.WriteLine(deleteProjectResult.Message);  
-                    }
-                    else
-                        Console.WriteLine(deleteProjectResult.Message);
+                    Console.WriteLine(deleteProjectResult.Message);  
                 }
                 else
                     Console.WriteLine("Project Id Doesn't Exists....");
@@ -543,14 +542,23 @@ namespace Output
             }
         }
 
+        //Enter Employee Id 
+        //Check Exists or not
+        // if Exists 
+        //send to Project List
+        //check in Project ListEmployee
+        //Display ListEmployee Project Id's
+        //Delete in Project List Employee
+        //Delete in Employee
+        //else
+        //No Employee Exists
         public static bool DeleteEmployee()
         {
             Employee employee = new();
             var displayEmployees = Logic.DisplayEmployees();
             if (displayEmployees.IsPositiveResult)
             {
-                Console.WriteLine("List of Available Employee details are...\nEmployee ID - Employee Name\n" +
-                "-----------------------------------");
+                Console.WriteLine("List of Available Employee details are...\nEmployee ID - Employee Name\n-----------------------------------");
                 foreach (Employee employeeProperties in displayEmployees.Results)
                     Console.WriteLine(employeeProperties.EmployeeId + "\t" + employeeProperties.EmployeeName);
                 Console.Write("Input the Employee Id (Only Numeric) to Delete - ");
@@ -559,13 +567,8 @@ namespace Output
                 if (employeeIdResult.IsPositiveResult)
                 {
                     var deleteemployeeResult = Logic.DeleteEmployee(employee);
-                    if (!deleteemployeeResult.IsPositiveResult)
-                    {
-
-                        Console.WriteLine(deleteemployeeResult.Message);
-                    }
-                    else
-                        Console.WriteLine(deleteemployeeResult.Message);
+                    DeleteEmployeeFromProject(employee.EmployeeId);
+                    Console.WriteLine(deleteemployeeResult.Message);
                 }
                 else
                     Console.WriteLine("Employee Id Doesn't Exists....");
@@ -589,6 +592,34 @@ namespace Output
                     break;
             }
             return displayEmployees.IsPositiveResult;
+        }
+
+        public static bool DeleteEmployeeFromProject(int _employeeId)
+        {
+            var displayProjects = Logic.DisplayProjects();
+            if (displayProjects.IsPositiveResult)
+            {
+                foreach (Project projectProperties in displayProjects.Results)
+                {
+                    var getProjectIdResult = Logic.GetProjectId(projectProperties.ProjectId);
+                    if (getProjectIdResult.ListEmployee != null)
+                    {
+                        Console.Write("List of Available Employees in the given project id - " + projectProperties.ProjectId + "\nEmployee ID - Employee Name\n-----------------------------------\n");
+                        foreach (Employee employeeProperties in getProjectIdResult.ListEmployee)
+                            Console.WriteLine(employeeProperties.EmployeeId + "\t" + employeeProperties.EmployeeName);
+                        var deleteEmployeeFromProjectResult = Logic.DeleteEmployeeFromProject(_employeeId, projectProperties.ProjectId);
+                        if (deleteEmployeeFromProjectResult.IsPositiveResult)
+                            Console.WriteLine(deleteEmployeeFromProjectResult.Message);
+                        else
+                            Console.WriteLine("\nProject id - " + projectProperties.ProjectId + " Doesn't contain the given Employee id - " + _employeeId);
+                    }
+                    else
+                        Console.WriteLine("\nThe given Project id Doesn't Contain Employee Details to Delete - " + _employeeId);
+                }
+            }
+            else
+                Console.WriteLine("Noting to Delete in Project List.....!!!!!");
+            return displayProjects.IsPositiveResult;
         }
 
         public static bool AddRole()
@@ -697,8 +728,7 @@ namespace Output
             var displayRoles = Logic.DisplayRoles();
             if (displayRoles.IsPositiveResult)
             {
-                Console.WriteLine("List of Available Role details are...\nRole ID - Role Name\n" +
-                "-----------------------------------");
+                Console.WriteLine("List of Available Role details are...\nRole ID - Role Name\n--------------------------");
                 foreach (Role roleProperties in displayRoles.Results)
                     Console.WriteLine(roleProperties.RoleId + "\t" + roleProperties.RoleName);
                 Console.Write("Input the Role Id (Only Numeric) to Delete - ");
@@ -707,12 +737,7 @@ namespace Output
                 if (roleIdResult.IsPositiveResult)
                 {
                     var deleteRoleResult = Logic.DeleteRole(role);
-                    if (!deleteRoleResult.IsPositiveResult)
-                    {
-                        Console.WriteLine(deleteRoleResult.Message);
-                    }
-                    else
-                        Console.WriteLine(deleteRoleResult.Message);
+                    Console.WriteLine(deleteRoleResult.Message);
                 }
                 else
                     Console.WriteLine("Role Id Doesn't Exists....");
@@ -721,7 +746,6 @@ namespace Output
                 Console.WriteLine("\n.....Role List is Empty.....\n");
             Console.WriteLine(@"Do you want to Delete more Roles? Y\N");
             char choice = Console.ReadKey().KeyChar;
-            Console.WriteLine("\n");
             switch (char.ToUpper(choice))
             {
                 case 'Y':
@@ -736,80 +760,6 @@ namespace Output
                     break;
             }
             return displayRoles.IsPositiveResult;
-        }
-
-        public static bool DeleteEmployeeFromProject()
-        {
-            Employee employeeId = new();
-            var displayProjects = Logic.DisplayProjects();
-            if (displayProjects.IsPositiveResult)
-            {
-                Console.WriteLine("List of Available Project details are...\nProject ID - Project Name\n" +
-                "-----------------------------------");
-                foreach (Project projectProperties in displayProjects.Results)
-                    Console.WriteLine(projectProperties.ProjectId + "\t" + projectProperties.ProjectName);
-                Console.Write("Select Project Id (Only Numeric) from which you want to delete Employee details - ");
-                var projectId = Convert.ToInt32(Console.ReadLine());
-                var projectIdResult = Logic.CheckProjectId(projectId);
-                if (projectIdResult.IsPositiveResult)
-                {
-                    var getProjectIdResult = Logic.GetProjectId(projectId);
-                    if (getProjectIdResult.ListEmployee!=null)
-                    {
-                        Console.Write("List of Available Employees in the given project id - " + projectId + "\nEmployee ID - Employee Name\n" +
-                                "-----------------------------------\n");
-                        
-                            foreach (Employee employeeProperties in getProjectIdResult.ListEmployee)
-                                Console.WriteLine(employeeProperties.EmployeeId + "\t" + employeeProperties.EmployeeName);
-                            Console.Write("\nInput the Employee Id (Only Numeric) to delete - ");
-                            employeeId.EmployeeId = Convert.ToInt32(Console.ReadLine());
-                            var deleteEmployeeFromProjectResult = Logic.DeleteEmployeeFromProject(employeeId, projectId);
-                            if (!deleteEmployeeFromProjectResult.IsPositiveResult)
-                            {
-                                Console.WriteLine(deleteEmployeeFromProjectResult.Message);
-                            }
-                            else
-                                Console.WriteLine(deleteEmployeeFromProjectResult.Message);    
-                    }
-                    else
-                    {
-                        Console.WriteLine("\nThe given Project id Doesn't Contain Employee Details to Delete - " + employeeId.EmployeeId);
-                        int option1 = DisplayMainMenu();
-                        MainCall(option1);
-                    }
-                }
-                else
-                {
-                    Console.WriteLine("\nThe given Project id Doesn't Exists - " + projectId);
-                    int option1 = DisplayMainMenu();
-                    MainCall(option1);
-                }
-            }
-            else
-            {
-                Console.WriteLine("Noting to Delete.....!!!!! "+displayProjects.Message);
-                int option1 = DisplayMainMenu();
-                MainCall(option1);
-            }
-            Console.WriteLine(@"Do you want to Delete more Employees from Project? Y\N");
-            char choice = Console.ReadKey().KeyChar;
-            Console.WriteLine("\n");
-            switch (char.ToUpper(choice))
-            {
-                case 'Y':
-                    DeleteEmployeeFromProject();
-                    break;
-                case 'N':
-                    int option1 = DisplayMainMenu();
-                    MainCall(option1);
-                    break;
-                default:
-                    Console.WriteLine("Some Error Occured!! Please select right option");
-                    option1 = DisplayMainMenu();
-                    MainCall(option1);
-                    break;
-            }
-            return displayProjects.IsPositiveResult;
         }
 
     }
