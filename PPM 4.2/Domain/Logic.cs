@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Model;
@@ -49,7 +49,7 @@ namespace Domain
         {
             DataResults<Project> displayProjectResults = new() { IsPositiveResult = true };
             if (projectDetails.Count > 0)
-                displayProjectResults.Results = projectDetails;
+                displayProjectResults.Results = projectDetails.OrderBy(projectProperties => projectProperties.ProjectId);
             else
                  displayProjectResults.IsPositiveResult = false;
             return displayProjectResults;
@@ -98,7 +98,7 @@ namespace Domain
         {
             DataResults<Employee> displayEmployeeResults = new() { IsPositiveResult = true };
             if (employeeDetails.Count > 0)
-                displayEmployeeResults.Results = employeeDetails;
+                displayEmployeeResults.Results = employeeDetails.OrderBy(employeeProperties => employeeProperties.EmployeeId);
             else
                 displayEmployeeResults.IsPositiveResult = false;
             return displayEmployeeResults;
@@ -155,7 +155,7 @@ namespace Domain
         {
             DataResults<Role> displayRoleResults = new (){ IsPositiveResult = true };
             if (roleDetails.Count > 0)
-                displayRoleResults.Results = roleDetails;
+                displayRoleResults.Results = roleDetails.OrderBy(roleProperties => roleProperties.RoleId);
             else
                 displayRoleResults.IsPositiveResult = false;
             return displayRoleResults;
@@ -197,6 +197,14 @@ namespace Domain
             return EmployeeIdResult;
         }
 
+        public static ActionResult DeleteEmployee(Employee EmployeeIdProperty)
+        {
+            ActionResult deleteEmployeeResult = new() { IsPositiveResult = true };
+            employeeDetails.RemoveAll(employeeProperties => employeeProperties.EmployeeId == EmployeeIdProperty.EmployeeId);
+            deleteEmployeeResult.Message = "\nSuccessfully deleted Employee id is - " + EmployeeIdProperty.EmployeeId;
+            return deleteEmployeeResult;
+        }
+
         public static ActionResult CheckProjectId(int _projectId)
         {
             ActionResult projectIdResult = new() { IsPositiveResult = true };
@@ -213,6 +221,14 @@ namespace Domain
                 projectIdResult.Message = "\nSome Error Occured!! Please select right option";
             }
             return projectIdResult;
+        }
+
+        public static ActionResult DeleteProject(Project ProjectIdProperty)
+        {
+            ActionResult deleteProjectResult = new() { IsPositiveResult = true };
+            projectDetails.RemoveAll(projectProperties => projectProperties.ProjectId == ProjectIdProperty.ProjectId);
+            deleteProjectResult.Message = "\nSuccessfully deleted Project id is - " + ProjectIdProperty.ProjectId;
+            return deleteProjectResult;
         }
 
         public static ActionResult CheckRoleId(int _roleId)
@@ -233,6 +249,14 @@ namespace Domain
             return roleIdResult;
         }
 
+        public static ActionResult DeleteRole(Role RoleIdProperty)
+        {
+            ActionResult deleteRoleResult = new() { IsPositiveResult = true };
+            roleDetails.RemoveAll(roleProperties => roleProperties.RoleId == RoleIdProperty.RoleId);
+            deleteRoleResult.Message = "\nSuccessfully deleted Role id is - " + RoleIdProperty.RoleId;
+            return deleteRoleResult;
+        }
+
         public static Employee CheckEmployeeRoleId(Employee EmployeeIdProperty)
         {
             Employee employee = new();
@@ -249,21 +273,21 @@ namespace Domain
             return project;
         }
 
-        public static ActionResult DeleteEmployeeFromProject(Employee employeeIdProperty, int _projectId)
+        public static ActionResult DeleteEmployeeFromProject(int _employeeId, int _projectId)
         {
             ActionResult deleteEmployeeFromProjectResult = new() { IsPositiveResult = true };
             try
             {
-                if (projectDetails.Single(projectProperties => projectProperties.ProjectId == _projectId).ListEmployee.Exists(employeeProperties => employeeProperties.EmployeeId == employeeIdProperty.EmployeeId))
+                if (projectDetails.Single(projectProperties => projectProperties.ProjectId == _projectId).ListEmployee.Exists(employeeProperties => employeeProperties.EmployeeId == _employeeId))
                 {
-                    var removableItem = projectDetails.Single(projectProperties => projectProperties.ProjectId == _projectId).ListEmployee.Single(employeeProperties => employeeProperties.EmployeeId == employeeIdProperty.EmployeeId);
+                    var removableItem = projectDetails.Single(projectProperties => projectProperties.ProjectId == _projectId).ListEmployee.Single(employeeProperties => employeeProperties.EmployeeId == _employeeId);
                     projectDetails.Single(projectProperties => projectProperties.ProjectId == _projectId).ListEmployee.Remove(removableItem);
-                    deleteEmployeeFromProjectResult.Message = "\nSuccessfully deleted Employee id is - " + employeeIdProperty.EmployeeId;
+                    deleteEmployeeFromProjectResult.Message = "\nSuccessfully deleted Employee id is - " + _employeeId;
                 }
                 else
                 {
                     deleteEmployeeFromProjectResult.IsPositiveResult = false;
-                    deleteEmployeeFromProjectResult.Message = "\nProject id - " + _projectId + " Doesn't contain the given Employee id - " + employeeIdProperty.EmployeeId;
+                    deleteEmployeeFromProjectResult.Message = "\nProject id - " + _projectId + " Doesn't contain the given Employee id - " + _employeeId;
                 } 
             }
             catch (Exception)
@@ -272,50 +296,6 @@ namespace Domain
                 deleteEmployeeFromProjectResult.Message = "\nSome Error Occured!! Please select right option";
             }
             return deleteEmployeeFromProjectResult;
-        }
-
-        public static ActionResult DeleteProject(Project ProjectIdProperty)
-        {
-            ActionResult deleteProjectResult = new() { IsPositiveResult = true };
-            if(projectDetails.Exists(projectProperties => projectProperties.ProjectId == ProjectIdProperty.ProjectId))
-            {
-                var removableItem = projectDetails.Single(projectProperties => projectProperties.ProjectId == ProjectIdProperty.ProjectId);
-                projectDetails.Remove(removableItem);
-                deleteProjectResult.Message = "\nSuccessfully deleted Project id is - " + ProjectIdProperty.ProjectId;
-            }
-            else
-                deleteProjectResult.IsPositiveResult = false;
-
-            return deleteProjectResult;
-        }
-
-        public static ActionResult DeleteEmployee(Employee EmployeeIdProperty)
-        {
-            ActionResult deleteEmployeeResult = new() { IsPositiveResult = true };
-            if (employeeDetails.Exists(employeeProperties => employeeProperties.EmployeeId == EmployeeIdProperty.EmployeeId))
-            {
-                var removableItem = employeeDetails.Single(employeeProperties => employeeProperties.EmployeeId == EmployeeIdProperty.EmployeeId);
-                employeeDetails.Remove(removableItem);
-                deleteEmployeeResult.Message = "\nSuccessfully deleted Employee id is - " + EmployeeIdProperty.EmployeeId;
-            }
-            else
-                deleteEmployeeResult.IsPositiveResult = false;
-
-            return deleteEmployeeResult;
-        }
-
-        public static ActionResult DeleteRole(Role RoleIdProperty)
-        {
-            ActionResult deleteRoleResult = new() { IsPositiveResult = true };
-            if (roleDetails.Exists(roleProperties => roleProperties.RoleId == RoleIdProperty.RoleId))
-            {
-                var removableItem = roleDetails.Single(roleProperties => roleProperties.RoleId == RoleIdProperty.RoleId);
-                roleDetails.Remove(removableItem);
-                deleteRoleResult.Message = "\nSuccessfully deleted Role id is - " + RoleIdProperty.RoleId;
-            }
-            else
-                deleteRoleResult.IsPositiveResult = false;
-            return deleteRoleResult;
         }
 
         public static ActionResult CheckCount(int count)
